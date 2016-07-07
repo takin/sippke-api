@@ -42,13 +42,17 @@ FirebaseHandler.prototype.ready = function(callback) {
 }
 
 FirebaseHandler.prototype.handleGPS = function(newPosition) {
-    
-    var deltaPosition = geolib.getDistance({latitude:newPosition.latitude, longitude:newPosition.longitude},{latitude:this._latestPosition.latitude,longitude:this._latestPosition.longitude});
 
-    if ( deltaPosition >= 10 ) {
-        this._db.child('position').set(newPosition);
-        this._latestPosition = newPosition;
+    if ( newPosition.hasOwnProperty('latitude') && newPosition.hasOwnProperty('longitude') && !isNaN(newPosition.speed)) {
+        
+        var deltaPosition = geolib.getDistance({latitude:newPosition.latitude, longitude:newPosition.longitude},{latitude:this._latestPosition.latitude,longitude:this._latestPosition.longitude});
+
+        if ( deltaPosition >= 10 ) {
+            this._db.child('position').set(newPosition);
+            this._latestPosition = newPosition;
+        }
     }
+    
 };
 
 FirebaseHandler.prototype.message = function(message) {

@@ -1,68 +1,26 @@
-var FirebaseHandler = require('./app/firebase-handler'),
+ /* globals process */
+var Firebase = require('firebase'),
+	FirebaseHandler = require('./app/firebase-handler'),
 	GPSParser = require('./app/gps-parser'),
 	gps = new GPSParser('/dev/ttyUSB0', 9600),
-	geolib = require('geolib'),
-	gpio = require('./app/rpi-gpio-dummy'),
 	// gpio = require('rpi-gpio'),
-    powerPin = 11,
-    gpsData = {};
+	gpio = require('./app/rpi-gpio-dummy'),
+	_ = require('lodash'),
+	argv = process.argv,
+	GPIOPins = [7,11,12,13,15,16,18,22,29,31,32,33,35,36,37,38,40];
 
-gps.on('gps-data', data => {
-	gpsData = data;
+Firebase.initializeApp({
+    serviceAccount:'app/service_account.json',
+    databaseURL:'https://vehicle-iot.firebaseio.com'
 });
 
-var positionQuery = setInterval(handlePositionQuery, 3000);
+var dbRef = Firebase.database().ref();
+var powerPin = (argv[2] === '--pin' || argv[2] === '-p')  && !isNaN(parseInt(argv[3])) && _.includes(GPIOPins, parseInt(argv[3])) ? argv[3] : 11;
+var Handler = new FirebaseHandler(dbRef, gpio, powerPin);
 
-function handlePositionQuery() {
-
-	FirebaseHandler.Position.once('value', positionValue => {
-		var currentPosition = positionValue.val();
-
-		// calculate the change of the distance between new GPS Data and the database position data
-		// if the distance is >= 10m then emit the new distance
-		var deltaOfDistance = geolib.getDistance(currentPosition, {latitude:gpsData.latitude,longitude:gpsData.longitude});
-
-		if ( deltaOfDistance >= 10 ) {
-			console.log(deltaOfDistance);
-			FirebaseHandler.Position.set(gpsData);
-		}
-	});
-
-}
-
-
-FirebaseHandler.watchTheCommand().then((status) => {
-	gpio.setup(powerPin, gpio.DIR_IN, (err) => {
-		if ( err ) {
-			console.log('error reading pin');
-			return;
-		}
-
-		gpio.read(powerPin, (err, value) => {
-			if( err ) {
-				console.log('unable to read GPIO Pin');
-				return;
-			}
-
-			if ( status === 'off' && value == 1 ) {
-				gpio.setup(powerPin, gpio.DIR_OUT, LockVehicle);
-			}
-		});
+Handler.watchCommand();
+Handler.ready(() => {
+	gps.on('gps-data', data => {
+		Handler.handleGPS(data);
 	});
 });
-
-function LockVehicle(err) {
-	if ( err ) {
-		console.log('unable to loack down vehilce');
-		return;
-	}
-
-	gpio.write(powerPin, true, (err) => {
-		if ( err ) {
-			console.log('unable to execute the command');
-			return;
-		}
-
-		console.log('vehicle locked down');
-	});
-}

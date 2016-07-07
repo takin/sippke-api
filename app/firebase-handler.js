@@ -1,30 +1,65 @@
-var firebase = require('firebase'),
-    ThePromise = require('promise');
+var ThePromise = require('promise'),
+    geolib = require('geolib');
 
-firebase.initializeApp({
-    serviceAccount:'app/service_account.json',
-    databaseURL:'https://vehicle-iot.firebaseio.com'
-});
+function FirebaseHandler(dbref, gpio, pin){
+    this._db = dbref;
+    this._gpio = gpio;
+    this._pin = pin;
 
-var dbRef = firebase.database().ref();
+    // read the initial vehicle status
+    this._gpio.setup(this._pin, this._gpio.DIR_IN, err => {
 
-var FirebaseHandler = (function(){
-    return {
-        watchTheCommand: function(){
-            var promise = new ThePromise((resolve, reject) => {
-                dbRef.child('status').on('value', (status) => {
-                    resolve(status.val());
-                });
-            });
+        if ( err ) {
+            return FirebaseHandler.prototype.message.call(this, 'Unable to setup GPIO Pin');
+        }
 
-            return promise;
-        },
-        Position: (function() {
-            return dbRef.child('position');
-        }())
-    };
+        this._gpio.read(this._pin, (err, value) => {
 
-}());
+            if ( err ) {
+                return FirebaseHandler.prototype.message.call(this, 'Unable to read GPIO Pin');
+            }
 
+            this._db.child('status').set(value);
+        });
+
+    });
+}
+
+FirebaseHandler.prototype.ready = function(callback) {
+    this._db.child('position').once('value', posObj => {
+        this._latestPosition = posObj.val();
+        callback.call(this);
+    });
+}
+
+FirebaseHandler.prototype.handleGPS = function(newPosition) {
+    
+    var deltaPosition = geolib.getDistance({latitude:newPosition.latitude, longitude:newPosition.longitude},{latitude:this._latestPosition.latitude,longitude:this._latestPosition.longitude});
+
+    if ( deltaPosition >= 10 ) {
+        this._db.child('position').set(newPosition);
+        this._latestPosition = newPosition;
+    }
+};
+
+FirebaseHandler.prototype.message = function(message) {
+    this._db.child('message').set(message);
+}
+
+FirebaseHandler.prototype.watchCommand = function() {
+    this._db.child('status').on('value', command => {
+        this._gpio.setup(this._pin, this._gpio.DIR_OUT, err => {
+            if ( err ) {
+                return FirebaseHandler.prototype.message.call(this, 'Unable to setup GPIO Pin to write');
+            }
+
+            this._gpio.write(this._pin, command.val(), err => {
+                if ( err ) {
+                    return FirebaseHandler.prototype.message.call(this, 'Unable to write the command to GPIO Pin');
+                }
+            })
+        });
+    });
+}
 
 module.exports = FirebaseHandler;

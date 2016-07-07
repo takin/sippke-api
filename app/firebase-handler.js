@@ -15,7 +15,11 @@ function FirebaseHandler(dbref, gpio, pin){
 
         this._gpio.read(this._pin, (err, value) => {
 
-            var commandToWrite = value ? "on" : "off";
+            // rpi-gpio using low active, so when the port value is high,
+            // then the relay is OFF
+            // so we need to reverse the state, to make the app interface 
+            // show the button state correctly
+            var commandToWrite = value ? "off" : "on";
 
             if ( err ) {
                 return FirebaseHandler.prototype.message.call(this, 'Unable to read GPIO Pin');
@@ -51,7 +55,7 @@ FirebaseHandler.prototype.message = function(message) {
 FirebaseHandler.prototype.watchCommand = function() {
     this._db.child('status').on('value', command => {
 
-        var transformedCommand = command.val() === "on" ? true : false;
+        var transformedCommand = command.val() === "on" ? false : true;
 
         this._gpio.setup(this._pin, this._gpio.DIR_OUT, err => {
             if ( err ) {

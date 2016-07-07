@@ -15,11 +15,13 @@ function FirebaseHandler(dbref, gpio, pin){
 
         this._gpio.read(this._pin, (err, value) => {
 
+            var commandToWrite = value ? "on" : "off";
+
             if ( err ) {
                 return FirebaseHandler.prototype.message.call(this, 'Unable to read GPIO Pin');
             }
 
-            this._db.child('status').set(value);
+            this._db.child('status').set(commandToWrite);
         });
 
     });
@@ -48,12 +50,15 @@ FirebaseHandler.prototype.message = function(message) {
 
 FirebaseHandler.prototype.watchCommand = function() {
     this._db.child('status').on('value', command => {
+
+        var transformedCommand = command.val() === "on" ? true : false;
+
         this._gpio.setup(this._pin, this._gpio.DIR_OUT, err => {
             if ( err ) {
                 return FirebaseHandler.prototype.message.call(this, 'Unable to setup GPIO Pin to write');
             }
 
-            this._gpio.write(this._pin, command.val(), err => {
+            this._gpio.write(this._pin, transformedCommand, err => {
                 if ( err ) {
                     return FirebaseHandler.prototype.message.call(this, 'Unable to write the command to GPIO Pin');
                 }

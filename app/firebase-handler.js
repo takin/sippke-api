@@ -26,6 +26,9 @@ function FirebaseHandler(dbref, gpio, pin){
             }
 
             this._db.child('status').set(commandToWrite);
+
+            var message = value ? ' Locked Down' : ' Ready';
+            FirebaseHandler.prototype.message.call(this, 'Vehicle is' + message);
         });
 
     });
@@ -66,6 +69,10 @@ FirebaseHandler.prototype.watchCommand = function() {
                 if ( err ) {
                     return FirebaseHandler.prototype.message.call(this, 'Unable to write the command to GPIO Pin');
                 }
+
+                var message = transformedCommand ? ' Locked Down' : ' Ready';
+
+                FirebaseHandler.prototype.message.call(this, 'Vehicle is' + message);
             })
         });
     });

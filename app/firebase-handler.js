@@ -43,7 +43,7 @@ FirebaseHandler.prototype.ready = function(callback) {
 
 FirebaseHandler.prototype.handleGPS = function(newPosition) {
 
-    if ( newPosition.hasOwnProperty('latitude') && newPosition.hasOwnProperty('longitude') && ) {
+    if ( newPosition.hasOwnProperty('latitude') && newPosition.hasOwnProperty('longitude') ) {
         if ( !isNaN(newPosition.latitude) && !isNaN(newPosition.longitude) && !isNaN(newPosition.speed) ) {
             var deltaPosition = geolib.getDistance({latitude:newPosition.latitude, longitude:newPosition.longitude},{latitude:this._latestPosition.latitude,longitude:this._latestPosition.longitude});
 

@@ -50,7 +50,10 @@ var gpsparser = function(device, baud) {
 		if (data.hasOwnProperty('speedKmph')) {
 			var speed = data.speedKmph;
 			if ( !isNaN(speed) ) {
-				gpsData.speed = speed;
+				gpsData.speed = {
+					value:speed,
+					unit:"Km/h"
+				};
 			}
 		}
 

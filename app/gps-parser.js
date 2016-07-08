@@ -2,8 +2,6 @@ var serialport = require('serialport');
 var nmea = require('nmea');
 var EventEmitter = require("events").EventEmitter;
 
-
-
 var gpsparser = function(device, baud) {
 	var port = new serialport(device, {
 			baudrate: baud, parser: serialport.parsers.readline("\n") });
@@ -28,22 +26,37 @@ var gpsparser = function(device, baud) {
 			return;
 		}
 
-		if (typeof(data.lat) !== 'undefined') {
-			gpsData.latitude = convert(data.lat, data.latPole);
+		if (data.hasOwnProperty('lat')) {
+			var latitude = convert(data.lat, data.latPole);
+			if ( !isNaN(latitude) ) {
+				gpsData.latitude = latitude;
+			}
 		}
 
-		if (typeof(data.lon) !== 'undefined') {
-			gpsData.longitude = convert(data.lon, data.lonPole);
+		if (data.hasOwnProperty('lon')) {
+			var longitude = convert(data.lon, data.lonPole);
+			if ( !isNaN(longitude) ) {
+				gpsData.longitude = longitude;
+			}
 		}
 
-		if (typeof(data.alt) !== 'undefined') {
-			gpsData.altitude = {value:data.alt, unit: data.altUnit};
+		if (data.hasOwnProperty('alt')) {
+			var altitude = {value:data.alt, unit: data.altUnit};
+			if ( altitude.hasOwnProperty('value') && !isNaN(altitude.value) ) {
+				gpsData.altitude = altitude;
+			}
 		}
 
-		if (typeof(data.speedKmph) !== 'undefined') {
-			gpsData.speed = data.speedKmph;
+		if (data.hasOwnProperty('speedKmph')) {
+			var speed = data.speedKmph;
+			if ( !isNaN(speed) ) {
+				gpsData.speed = speed;
+			}
 		}
-	    self.emit('gps-data', gpsData);
+
+		if ( gpsData.hasOwnProperty('latitude') && gpsData.hasOwnProperty('longitude') && gpsData.hasOwnProperty('altitude') && gpsData.hasOwnProperty('speed')){
+	    	self.emit('gps-data', gpsData);
+		}
 
 		self.emit('data',data);
 		self.emit(data.type,data);

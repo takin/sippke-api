@@ -39,27 +39,24 @@ FirebaseHandler.prototype.ready = function(callback) {
         this._latestPosition = posObj.val();
         callback.call(this);
     });
-}
+};
 
 FirebaseHandler.prototype.handleGPS = function(newPosition) {
 
-    if ( newPosition.hasOwnProperty('latitude') && newPosition.hasOwnProperty('longitude') ) {
-        if ( !isNaN(newPosition.latitude) && !isNaN(newPosition.longitude) && !isNaN(newPosition.speed) ) {
-            var deltaPosition = geolib.getDistance({latitude:newPosition.latitude, longitude:newPosition.longitude},{latitude:this._latestPosition.latitude,longitude:this._latestPosition.longitude});
+    var newPoint = {latitude:newPosition.latitude, longitude:newPosition.longitude};
+    var oldPoint = {latitude:this._latestPosition.latitude,longitude:this._latestPosition.longitude};
+    var deltaPosition = geolib.getDistance(newPoint,oldPoint);
 
-            if ( deltaPosition >= 10 ) {
-                this._db.child('position').set(newPosition);
-                this._latestPosition = newPosition;
-            }
-        }
-
+    if ( deltaPosition >= 10 ) {
+        this._db.child('position').set(newPosition);
+        this._latestPosition = newPosition;
     }
     
 };
 
 FirebaseHandler.prototype.message = function(message) {
     this._db.child('message').set(message);
-}
+};
 
 FirebaseHandler.prototype.watchCommand = function() {
     this._db.child('status').on('value', command => {
@@ -79,9 +76,9 @@ FirebaseHandler.prototype.watchCommand = function() {
                 var message = transformedCommand ? ' Locked Down' : ' Ready';
 
                 FirebaseHandler.prototype.message.call(this, 'Vehicle is' + message);
-            })
+            });
         });
     });
-}
+};
 
 module.exports = FirebaseHandler;

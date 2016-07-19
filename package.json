@@ -4,8 +4,7 @@
   "description": "the vehicle side of firebase app",
   "main": "main.js",
   "scripts": {
-    "serve": "node main.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "serve": "sudo node main.js"
   },
   "author": "syamsul muttaqin",
   "license": "MIT",

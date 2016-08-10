@@ -56,6 +56,7 @@ FirebaseHandler.prototype.handleGPS = function(newPosition) {
 
 FirebaseHandler.prototype.message = function(message) {
     this._db.child('message').set(message);
+    console.log(message);
 };
 
 FirebaseHandler.prototype.watchCommand = function() {

@@ -4,15 +4,15 @@ var Firebase = require('firebase'),
 	GPSParser = require('./app/gps-parser'),
 	gps = new GPSParser('/dev/ttyUSB0', 9600),
 	path = require('path'),
-	// gpio = require('rpi-gpio'),
-	gpio = require('./app/rpi-gpio-dummy'),
+	gpio = require('rpi-gpio'),
+	//gpio = require('./app/rpi-gpio-dummy'),
 	_ = require('lodash'),
 	argv = process.argv,
 	GPIOPins = [7,11,12,13,15,16,18,22,29,31,32,33,35,36,37,38,40];
 
+var VEHICLE_ID = 'DR3559KE';
 // current directory where this app is located
-var currentDir = path.dirname(__dirname);
-
+var currentDir = `${__dirname}`;
 /*
 In case there is space to the path to the current directory 
 we need to normalize it, so, node still can find the service account file

@@ -8,6 +8,7 @@ module.exports = {
 		callback.call(this, false, true);
 	}, 
 	write: function(pinNumber, data, callback) {
+		console.log('gpio state -> ' + data);
 		callback.call(this);
 	},
 	DIR_IN: 1,

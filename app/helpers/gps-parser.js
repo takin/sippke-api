@@ -7,7 +7,7 @@ var gpsparser = function(device, baud) {
 			baudrate: baud, parser: serialport.parsers.readline("\n") });
 	var self = this;
 
-	var gpsData = {};
+	var gpsData = gpsData || {position:{}};
 
 	port.on('data', function(line) {
 		if (line === "undefined") {
@@ -29,14 +29,14 @@ var gpsparser = function(device, baud) {
 		if (data.hasOwnProperty('lat')) {
 			var latitude = convert(data.lat, data.latPole);
 			if ( !isNaN(latitude) ) {
-				gpsData.latitude = latitude;
+				gpsData.position.latitude = latitude;
 			}
 		}
 
 		if (data.hasOwnProperty('lon')) {
 			var longitude = convert(data.lon, data.lonPole);
 			if ( !isNaN(longitude) ) {
-				gpsData.longitude = longitude;
+				gpsData.position.longitude = longitude;
 			}
 		}
 
@@ -57,7 +57,7 @@ var gpsparser = function(device, baud) {
 			}
 		}
 
-		if ( gpsData.hasOwnProperty('latitude') && gpsData.hasOwnProperty('longitude') && gpsData.hasOwnProperty('altitude') && gpsData.hasOwnProperty('speed')){
+		if ( gpsData.position.hasOwnProperty('latitude') && gpsData.position.hasOwnProperty('longitude') && gpsData.hasOwnProperty('altitude') && gpsData.hasOwnProperty('speed')){
 	    	self.emit('gps-data', gpsData);
 		}
 

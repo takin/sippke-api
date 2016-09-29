@@ -10,6 +10,7 @@ var gpsparser = function(device, baud) {
 	var gpsData = gpsData || {position:{}};
 
 	port.on('data', function(line) {
+
 		if (line === "undefined") {
 			return;
 		}

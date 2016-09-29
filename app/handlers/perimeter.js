@@ -1,9 +1,10 @@
-var gpio = require('../test/rpi-gpio'),
-    // gpio = require('rpi-gpio'),
-    geolib = require('geolib');
-    
+var gpio = require('../test/rpi-gpio');
 
-function Perimeter(powerPin, GPS, PerimeterModel, PositionModel) {
+// var gpio = require('rpi-gpio');
+var geolib = require('geolib');
+
+
+function Perimeter(powerPin, GPS, PerimeterModel, PowerModel) {
     PerimeterModel.enabled.listen(isEnabled => {
         if ( isEnabled ) {
             PerimeterModel.root(perimeterData => {
@@ -23,10 +24,14 @@ function Perimeter(powerPin, GPS, PerimeterModel, PositionModel) {
     var TurnoffVehicle = function() {
         gpio.setup(powerPin, gpio.DIR_OUT, err => {
             if ( !err ) {
-                gpio.write(powerPin,1);
-                // proses update lokasi ke dalam database 
-                // setelah proses mematikan kendaraan tidak perlu dilakukan
-                // karena proses ini sudah dilakukan secara otomatis pada bagian main.js
+                gpio.write(powerPin,1, err => {
+                    // proses update lokasi ke dalam database 
+                    // setelah proses mematikan kendaraan tidak perlu dilakukan
+                    // karena proses ini sudah dilakukan secara otomatis pada bagian main.js
+                    if( !err ) {
+                        PowerModel.set('off');
+                    }
+                });
             }
         });
     };

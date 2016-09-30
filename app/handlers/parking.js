@@ -1,7 +1,7 @@
-var gpio = require('../test/rpi-gpio');
+// var gpio = require('../test/rpi-gpio');
 
+var gpio = require('rpi-gpio');
 var geolib = require('geolib');
-// var gpio = require('rpi-gpio');
 
 var parkingCoordinate;
 var intervalObj;

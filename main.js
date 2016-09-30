@@ -34,8 +34,11 @@ gps.on('gps-data', data => {
 		if( delta > 0 ) {
 			console.log(delta);
 			Vehicle.position.set(Datamodel.position);
+			last = Datamodel.position;
+			return;
 		}
 	}
+	
 	last = Datamodel.position;
 });
 

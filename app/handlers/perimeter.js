@@ -1,6 +1,6 @@
-var gpio = require('../test/rpi-gpio');
+// var gpio = require('../test/rpi-gpio');
 
-// var gpio = require('rpi-gpio');
+var gpio = require('rpi-gpio');
 var geolib = require('geolib');
 
 

@@ -11,7 +11,7 @@ function Perimeter(powerPin, GPS, PerimeterModel, PowerModel) {
                 var radiusInMeters = perimeterData.radius.unit == 'Km' ? (perimeterData.radius.value * 1000) : perimeterData.radius.value;
                 GPS.on('gps-data', gpsData => {
                     var isInsidePerimeter = geolib.isPointInCircle(gpsData.position,perimeterData.center,radiusInMeters);
-                    if ( !isInsidePerimeter && perimeterData.engine == 'on') {
+                    if ( !isInsidePerimeter && perimeterData.power == 'on') {
                         // jika kendaraan keluar dari area perimeter
                         // maka lakukan prosedur untuk mematikan kendaraan
                         TurnoffVehicle();

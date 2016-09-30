@@ -44,4 +44,4 @@ gps.on('gps-data', data => {
 
 PowerHandler(powerPIN,Vehicle.power);
 ParkingHandler(alarmPIN,gps,Vehicle.parking);
-PerimeterHandler(powerPIN,gps,Vehicle.perimeter);
+PerimeterHandler(powerPIN,gps,Vehicle.perimeter,Vehicle.power);

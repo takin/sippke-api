@@ -29,17 +29,9 @@ gps.on('gps-data', data => {
 	Datamodel.position.latitude = data.position.latitude;
 	Datamodel.position.longitude = data.position.longitude;
 	Datamodel.position.speed = data.speed;
-	if (last) {
-		var delta = geolib.getDistance(Datamodel.position,last,1,1);
-		if( delta > 0 ) {
-			console.log(delta);
-			Vehicle.position.set(Datamodel.position);
-			last = Datamodel.position;
-			return;
-		}
+	if( data.speed.value > 5) {
+		Vehicle.position.set(Datamodel.position);
 	}
-	
-	last = Datamodel.position;
 });
 
 PowerHandler(powerPIN,Vehicle.power);

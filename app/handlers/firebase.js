@@ -37,6 +37,18 @@ function FirebaseHandler(APP_ROOT,ID){
     this.power = {
         set: function(newValue) {
             fc._power.set(newValue);
+            /**
+             * jika newValue = 'off', artinya kontak dimatikan,
+             * maka engine juga harus di set ke dalam kondisi OFF
+             * 
+             * Proses ini dilakukan di sini untuk membuatnya otomatis
+             * sehingga pada proses perimeter tidak perlu dilakukan
+             * proses untuk men-set engine menjadi 'off'
+             */
+
+            if( newValue == 'off' ) {
+                fc._engine.set(newValue);
+            }
         },
         listen: function(callback) {
             fc._power.on('value', power => {

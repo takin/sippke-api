@@ -3,6 +3,7 @@ var FirebaseHandler = require('./app/handlers/firebase'),
 	ParkingHandler = require('./app/handlers/parking'),
 	PerimeterHandler = require('./app/handlers/perimeter'),
 	PowerHandler = require('./app/handlers/power'),
+	EngineHandler = require('./app/handlers/engine'),
 	Datamodel = require('./app/helpers/datamodel'),
     GPSParser = require('./app/helpers/gps-parser'),
 	gps = new GPSParser('/dev/ttyUSB0', 9600),
@@ -19,21 +20,20 @@ var FirebaseHandler = require('./app/handlers/firebase'),
 
 var Vehicle = new FirebaseHandler(APP_ROOT,vehicleID);
 
-/**
- * whatever happen as long as there is position update
- * just emit it to the server
- */
-var last;
-gps.on('gps-data', data => {
-	Datamodel.position.altitude.value = data.altitude;
-	Datamodel.position.latitude = data.position.latitude;
-	Datamodel.position.longitude = data.position.longitude;
-	Datamodel.position.speed = data.speed;
-	if( data.speed.value > 5) {
-		Vehicle.position.set(Datamodel.position);
-	}
-});
+setInterval(() => {
+	gps.on('gps-data', data => {
+		Datamodel.position.altitude.value = data.altitude;
+		Datamodel.position.latitude = data.position.latitude;
+		Datamodel.position.longitude = data.position.longitude;
+		Datamodel.position.speed = data.speed;
+		if( data.speed.value > 10) {
+			Vehicle.position.set(Datamodel.position);
+		}
+	});
+}, 1000);
+
 
 PowerHandler(powerPIN,Vehicle.power);
+EngineHandler(enginePIN,Vehicle.engine);
 ParkingHandler(alarmPIN,gps,Vehicle.parking);
 PerimeterHandler(powerPIN,gps,Vehicle.perimeter,Vehicle.power);

@@ -4,11 +4,9 @@
 
 var gpio = require('rpi-gpio');
 
-var engineIsOFF = true;
-
 function Engine(pin,EngineModel) {
     EngineModel.listen(state => {
-        if ( state == 'on') {
+        if ( state == 'ignite') {
             gpio.setup(pin, gpio.DIR_OUT, err => {
                 if (!err) {
                     // untuk sementara, starter engine menggunakan timer
@@ -23,7 +21,6 @@ function Engine(pin,EngineModel) {
                                 gpio.write(pin, 1, err => {
                                     if(!err) {
                                         EngineModel.set('on');
-                                        engineIsOFF = false;
                                     }
                                 });
                             }, 800);

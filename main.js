@@ -30,9 +30,10 @@ gps.on('gps-data', data => {
 		return;
 	}
 	// jika speed dibawah 10 maka set data speed menjadi 0;
-	Datamodel.position.speed.value = 0;
-	Vehicle.position.set(Datamodel.position);
+	// Datamodel.position.speed.value = 0;
+	// Vehicle.position.set(Datamodel.position);
 });
+
 HornHandler(alarmPIN,Vehicle.horn);
 PowerHandler(powerPIN,Vehicle.power);
 EngineHandler(enginePIN,Vehicle.engine);

@@ -28,7 +28,11 @@ setInterval(() => {
 		Datamodel.position.speed = data.speed;
 		if( data.speed.value > 10) {
 			Vehicle.position.set(Datamodel.position);
+			return;
 		}
+		// jika speed dibawah 10 maka set data speed menjadi 0;
+		Datamodel.position.speed.value = 0;
+		Vehicle.position.set(Datamodel.position);
 	});
 }, 1000);
 

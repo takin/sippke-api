@@ -15,12 +15,12 @@ var FirebaseHandler = require('./app/handlers/firebase'),
 	APP_ROOT = `${path.dirname(__dirname)}/${path.basename(__dirname)}`,
 	vehicleID = 'DR3559KE',
 	powerPIN = 11,
-	enginePIN = 12,
-	alarmPIN = 13;
+	enginePIN = 13,
+	alarmPIN = 12;
 
 var Vehicle = new FirebaseHandler(APP_ROOT,vehicleID);
-
-setInterval(() => {
+/*
+//setInterval(() => {
 	gps.on('gps-data', data => {
 		Datamodel.position.altitude.value = data.altitude;
 		Datamodel.position.latitude = data.position.latitude;
@@ -34,8 +34,8 @@ setInterval(() => {
 		Datamodel.position.speed.value = 0;
 		Vehicle.position.set(Datamodel.position);
 	});
-}, 1000);
-
+//}, 1000);
+*/
 
 PowerHandler(powerPIN,Vehicle.power);
 EngineHandler(enginePIN,Vehicle.engine);

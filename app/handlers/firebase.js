@@ -9,6 +9,7 @@ function FirebaseConnector(APP_ROOT,ID){
     this._root = Firebase.database().ref(ID);
     this._engine = this._root.child('engine');
     this._power = this._root.child('power');
+    this._horn = this._root.child('horn');
     this._parking = this._root.child('parking');
     this._perimeter = this._root.child('perimeter');
     this._position = this._root.child('position');
@@ -53,6 +54,14 @@ function FirebaseHandler(APP_ROOT,ID){
         listen: function(callback) {
             fc._power.on('value', power => {
                 callback.call(this, power.val());
+            });
+        }
+    };
+
+    this.horn = {
+        listen: function(callback) {
+            fc._horn.on('value', horn => {
+                callback.call(this, horn.val());
             });
         }
     };

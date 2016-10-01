@@ -3,6 +3,7 @@ var FirebaseHandler = require('./app/handlers/firebase'),
 	ParkingHandler = require('./app/handlers/parking'),
 	PerimeterHandler = require('./app/handlers/perimeter'),
 	PowerHandler = require('./app/handlers/power'),
+	HornHandler = require('./app/handlers/horn'),
 	EngineHandler = require('./app/handlers/engine'),
 	Datamodel = require('./app/helpers/datamodel'),
     GPSParser = require('./app/helpers/gps-parser'),
@@ -19,24 +20,20 @@ var FirebaseHandler = require('./app/handlers/firebase'),
 	alarmPIN = 12;
 
 var Vehicle = new FirebaseHandler(APP_ROOT,vehicleID);
-/*
-//setInterval(() => {
-	gps.on('gps-data', data => {
-		Datamodel.position.altitude.value = data.altitude;
-		Datamodel.position.latitude = data.position.latitude;
-		Datamodel.position.longitude = data.position.longitude;
-		Datamodel.position.speed = data.speed;
-		if( data.speed.value > 10) {
-			Vehicle.position.set(Datamodel.position);
-			return;
-		}
-		// jika speed dibawah 10 maka set data speed menjadi 0;
-		Datamodel.position.speed.value = 0;
+gps.on('gps-data', data => {
+	Datamodel.position.altitude.value = data.altitude;
+	Datamodel.position.latitude = data.position.latitude;
+	Datamodel.position.longitude = data.position.longitude;
+	Datamodel.position.speed = data.speed;
+	if( data.speed.value > 10) {
 		Vehicle.position.set(Datamodel.position);
-	});
-//}, 1000);
-*/
-
+		return;
+	}
+	// jika speed dibawah 10 maka set data speed menjadi 0;
+	Datamodel.position.speed.value = 0;
+	Vehicle.position.set(Datamodel.position);
+});
+HornHandler(alarmPIN,Vehicle.horn);
 PowerHandler(powerPIN,Vehicle.power);
 EngineHandler(enginePIN,Vehicle.engine);
 ParkingHandler(alarmPIN,gps,Vehicle.parking);

@@ -7,16 +7,29 @@ function FirebaseConnector(APP_ROOT,ID){
     });
 
     this._root = Firebase.database().ref(ID);
+    this._ping = this._root.child('ping');
     this._engine = this._root.child('engine');
     this._power = this._root.child('power');
     this._horn = this._root.child('horn');
     this._parking = this._root.child('parking');
     this._perimeter = this._root.child('perimeter');
     this._position = this._root.child('position');
+    this._message = this._root.child('message');
 }
 
 function FirebaseHandler(APP_ROOT,ID){
     var fc = new FirebaseConnector(APP_ROOT,ID);
+
+    this.ping = {
+        answer: function(value) {
+            fc._ping.set(value);
+        },
+        listen: function(callback) {
+            fc._ping.on('value', ping => {
+                callback.call(this, ping.val());
+            });
+        }
+    };
 
     /**
      * Engine handler
@@ -81,6 +94,7 @@ function FirebaseHandler(APP_ROOT,ID){
     };
 
     this.perimeter = {
+        message: this.message,
         root: function(callback) {
             fc._perimeter.on('value', perimeter => {
                 callback.call(this, perimeter.val());
@@ -137,6 +151,12 @@ function FirebaseHandler(APP_ROOT,ID){
                 }
             };
         })()
+    };
+
+    this.message = {
+        set: function(message) {
+            fc._message.set(message);
+        }
     };
 }
 

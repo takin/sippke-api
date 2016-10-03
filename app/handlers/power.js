@@ -1,5 +1,5 @@
+// var gpio = require('../mockup/rpi-gpio');
 var gpio = require('rpi-gpio');
-// var gpio = require('../test/rpi-gpio');
 
 
 function Power(powerPin, powerModel) {

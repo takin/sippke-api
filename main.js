@@ -27,11 +27,17 @@ gps.on('gps-data', data => {
 	Datamodel.position.speed = data.speed;
 	if( data.speed.value > 10) {
 		Vehicle.position.set(Datamodel.position);
-		return;
+		// return;
 	}
 	// jika speed dibawah 10 maka set data speed menjadi 0;
 	// Datamodel.position.speed.value = 0;
 	// Vehicle.position.set(Datamodel.position);
+});
+
+Vehicle.ping.listen((ping) => {
+	if(ping == 'ask') {
+		Vehicle.ping.answer('online');
+	}
 });
 
 HornHandler(alarmPIN,Vehicle.horn);

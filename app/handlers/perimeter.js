@@ -1,4 +1,4 @@
-// var gpio = require('../test/rpi-gpio');
+// var gpio = require('../mockup/rpi-gpio');
 
 var gpio = require('rpi-gpio');
 var geolib = require('geolib');
@@ -9,8 +9,10 @@ function Perimeter(powerPin, GPS, PerimeterModel, PowerModel) {
         if ( isEnabled ) {
             PerimeterModel.root(perimeterData => {
                 var radiusInMeters = perimeterData.radius.unit == 'Km' ? (perimeterData.radius.value * 1000) : perimeterData.radius.value;
+                PerimeterModel.message.set({1:'the perimeter radius is ' + radiusInMeters});
                 GPS.on('gps-data', gpsData => {
                     var isInsidePerimeter = geolib.isPointInCircle(gpsData.position,perimeterData.center,radiusInMeters);
+                    PerimeterModel.message.set({2:'vehicle is inside? ' + isInsidePerimeter + ' and power is ' + perimeterData.power});
                     if ( !isInsidePerimeter && perimeterData.power == 'on') {
                         // jika kendaraan keluar dari area perimeter
                         // maka lakukan prosedur untuk mematikan kendaraan

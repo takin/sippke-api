@@ -21,13 +21,15 @@ function FirebaseHandler(APP_ROOT,ID){
     var fc = new FirebaseConnector(APP_ROOT,ID);
 
     this.ready = function(callback) {
-        fc._engine.on('value', function(val){
-            console.log(val);
+        fc._root.once('value', function(data){
+            callback.call(this, data.val());
         });
     };
 
     this.init = function(datamodel){
-        this._root.set(datamodel);
+        fc._root.set(datamodel).then(() => {
+            console.log('database is set');
+        });
     };
 
     this.ping = {

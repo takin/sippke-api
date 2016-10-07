@@ -19,6 +19,7 @@ var Vehicle = new FirebaseHandler(APP_ROOT,vehicleID);
 
 Vehicle.ready((initialData) => {
 	if( initialData == 'null' ) {
+		console.log('data is empty');
 		Vehicle.init(Datamodel);
 	}
 	gps.on('gps-data', data => {

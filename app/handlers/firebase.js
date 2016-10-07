@@ -20,6 +20,16 @@ function FirebaseConnector(APP_ROOT,ID){
 function FirebaseHandler(APP_ROOT,ID){
     var fc = new FirebaseConnector(APP_ROOT,ID);
 
+    this.ready = function(callback) {
+        fc._engine.on('value', function(val){
+            console.log(val);
+        });
+    };
+
+    this.init = function(datamodel){
+        this._root.set(datamodel);
+    };
+
     this.ping = {
         answer: function(value) {
             fc._ping.set(value);

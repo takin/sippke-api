@@ -6,42 +6,41 @@ var FirebaseHandler = require('./app/handlers/firebase'),
 	HornHandler = require('./app/handlers/horn'),
 	EngineHandler = require('./app/handlers/engine'),
 	Datamodel = require('./app/helpers/datamodel'),
-    GPSParser = require('./app/helpers/gps-parser'),
+	GPSParser = require('./app/helpers/gps-parser'),
 	gps = new GPSParser('/dev/ttyUSB0', 9600),
 	path = require('path'),
-	_ = require('lodash'),
-	geolib = require('geolib'),
-	argv = process.argv,
-	GPIOPins = [7,11,12,13,15,16,18,22,29,31,32,33,35,36,37,38,40],
 	APP_ROOT = `${path.dirname(__dirname)}/${path.basename(__dirname)}`,
-	vehicleID = 'DR3559KE',
+	vehicleID = 'DK409DF',
 	powerPIN = 11,
 	enginePIN = 13,
 	alarmPIN = 12;
 
 var Vehicle = new FirebaseHandler(APP_ROOT,vehicleID);
-gps.on('gps-data', data => {
-	Datamodel.position.altitude.value = data.altitude;
-	Datamodel.position.latitude = data.position.latitude;
-	Datamodel.position.longitude = data.position.longitude;
-	Datamodel.position.speed = data.speed;
-	if( data.speed.value > 10) {
-		Vehicle.position.set(Datamodel.position);
-		// return;
-	}
-	// jika speed dibawah 10 maka set data speed menjadi 0;
-	// Datamodel.position.speed.value = 0;
-	// Vehicle.position.set(Datamodel.position);
-});
 
-Vehicle.ping.listen((ping) => {
-	if(ping == 'ask') {
-		Vehicle.ping.answer('online');
+Vehicle.ready((initialData) => {
+	if( initialData == 'null' ) {
+		Vehicle.init(Datamodel);
 	}
-});
+	gps.on('gps-data', data => {
+		Datamodel.position.altitude.value = data.altitude.value;
+		Datamodel.position.latitude = data.position.latitude;
+		Datamodel.position.longitude = data.position.longitude;
+		Datamodel.position.speed = data.speed;
+		if( data.speed.value > 10) {
+			Vehicle.position.set(Datamodel.position);
+		}
+	});
 
-HornHandler(alarmPIN,Vehicle.horn);
-PowerHandler(powerPIN,Vehicle.power);
-EngineHandler(enginePIN,Vehicle.engine);
-ParkingHandler(alarmPIN,gps,Vehicle.parking);
-PerimeterHandler(powerPIN,gps,Vehicle.perimeter,Vehicle.power);
+	Vehicle.ping.listen((ping) => {
+		if(ping == 'ask') {
+			Vehicle.ping.answer('online');
+		}
+	});
+
+	HornHandler(alarmPIN,Vehicle.horn);
+	PowerHandler(powerPIN,Vehicle.power);
+	EngineHandler(enginePIN,Vehicle.engine);
+	ParkingHandler(alarmPIN,gps,Vehicle.parking);
+	PerimeterHandler(powerPIN,gps,Vehicle.perimeter,Vehicle.power);
+
+});

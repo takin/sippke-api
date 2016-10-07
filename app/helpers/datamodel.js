@@ -1,35 +1,38 @@
 var datamodel = {
-    engine:'on|off',
-    power:'on|off',
+    engine:'OFF',
+    horn:'OFF',
+    message:'the message was here',
+    power:'OFF',
+    ping:'ask',
     parking : {
-        enabled:'boolean',
+        enabled:false,
         radius:{
-            unit:'M|Km',
-            value: 'int'
+            unit:'meter',
+            value: 10
+        }
+    },
+    perimeter : {
+        enabled:false,
+        center:{
+            latitude:0.00000,
+            longitude:0.00000
+        },
+        radius: {
+            unit: 'meter',
+            value:0
         }
     },
     position : {    
         altitude: {
             unit: 'M',
-            value:'float'
+            value:0
         },
         speed:{
             unit: 'Km/h',
-            value: 'float'
+            value: 0
         },
-        latitude:'double',
-        longitude: 'double'
-    },
-    perimeter : {
-        enabled:'boolean',
-        center:{
-            latitude:'double',
-            longitude: 'double'
-        },
-        radius: {
-            unit: 'M',
-            value:'int'
-        }
+        latitude:0.00000,
+        longitude:0.00000
     }
 };
 

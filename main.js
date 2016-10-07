@@ -10,7 +10,7 @@ var FirebaseHandler = require('./app/handlers/firebase'),
 	gps = new GPSParser('/dev/ttyUSB0', 9600),
 	path = require('path'),
 	APP_ROOT = `${path.dirname(__dirname)}/${path.basename(__dirname)}`,
-	vehicleID = 'DK409DF',
+	vehicleID = 'DR3559KE',
 	powerPIN = 11,
 	enginePIN = 13,
 	alarmPIN = 12;
@@ -18,31 +18,29 @@ var FirebaseHandler = require('./app/handlers/firebase'),
 var Vehicle = new FirebaseHandler(APP_ROOT,vehicleID);
 
 Vehicle.ready((initialData) => {
-	console.log(initialData);
 	if( initialData == null ) {
-		console.log('data is empty');
 		Vehicle.init(Datamodel);
 	}
-	gps.on('gps-data', data => {
-		Datamodel.position.altitude.value = data.altitude.value;
-		Datamodel.position.latitude = data.position.latitude;
-		Datamodel.position.longitude = data.position.longitude;
-		Datamodel.position.speed = data.speed;
-		if( data.speed.value > 10) {
-			Vehicle.position.set(Datamodel.position);
-		}
-	});
-
-	Vehicle.ping.listen((ping) => {
-		if(ping == 'ask') {
-			Vehicle.ping.answer('online');
-		}
-	});
-
-	HornHandler(alarmPIN,Vehicle.horn);
-	PowerHandler(powerPIN,Vehicle.power);
-	EngineHandler(enginePIN,Vehicle.engine);
-	ParkingHandler(alarmPIN,gps,Vehicle.parking);
-	PerimeterHandler(powerPIN,gps,Vehicle.perimeter,Vehicle.power);
-
 });
+
+gps.on('gps-data', data => {
+	Datamodel.position.altitude.value = data.altitude.value;
+	Datamodel.position.latitude = data.position.latitude;
+	Datamodel.position.longitude = data.position.longitude;
+	Datamodel.position.speed = data.speed;
+	if( data.speed.value > 10) {
+		Vehicle.position.set(Datamodel.position);
+	}
+});
+
+Vehicle.ping.listen((ping) => {
+	if(ping == 'ask') {
+		Vehicle.ping.answer('online');
+	}
+});
+
+HornHandler(alarmPIN,Vehicle.horn);
+PowerHandler(powerPIN,Vehicle.power);
+EngineHandler(enginePIN,Vehicle.engine);
+ParkingHandler(alarmPIN,gps,Vehicle.parking);
+PerimeterHandler(powerPIN,gps,Vehicle.perimeter,Vehicle.power);

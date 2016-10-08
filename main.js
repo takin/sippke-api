@@ -18,7 +18,8 @@ var FirebaseHandler = require('./app/handlers/firebase'),
 var Vehicle = new FirebaseHandler(APP_ROOT,vehicleID);
 
 Vehicle.ready((initialData) => {
-	if( initialData == 'null' ) {
+	console.log(initialData);
+	if( initialData == null ) {
 		console.log('data is empty');
 		Vehicle.init(Datamodel);
 	}

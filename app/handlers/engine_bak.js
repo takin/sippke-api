@@ -6,8 +6,7 @@
 var gpio = require('rpi-gpio');
 
 function Engine(pin,EngineModel) {
-
-    function set(state) {
+    EngineModel.listen(state => {
         if ( state == 'ignite') {
             gpio.setup(pin, gpio.DIR_OUT, err => {
                 if (!err) {
@@ -31,11 +30,7 @@ function Engine(pin,EngineModel) {
                 }
             });
         }
-    }
-
-    EngineModel.listen(set);
-
-    return set;
+    });
 }
 
 module.exports = Engine;

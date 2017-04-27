@@ -5,11 +5,9 @@
  * dari aplikasi Android
  */
 var bleno = require('bleno');
-var gpio = require('rpi-gpio');
-var PowerHandler = require('./power');
-var EngineHandler = require('./engine');
 
-function vehicleBLE(Vehicle, powerPin, starterPin){
+
+function vehicleBLE(){
 
     var myService = 'SiPPKe';
 
@@ -21,32 +19,16 @@ function vehicleBLE(Vehicle, powerPin, starterPin){
         }
     });
 
-    bleno.on('connect', client => {
-        console.log(client + ' connected!');
-    });
-
     bleno.on('disconnect', (client) => {
-        console.log('disconnected');
-        var state = 'off';
-        // PowerHandler(powerPin, Vehicle.power).set('off');
-        gpio.setup(powerPin, gpio.DIR_OUT, err => {
-            if ( !err ) {
-                var boolState = state == 'off';
-                gpio.write(powerPin, boolState, err => {
-                    if (err) {
-                        state = (state == 'off') ? 'on' : 'off';
-                    }
-                    Vehicle.power.set(state);
-                });
-            }
-        });
+	console.log('client disconnected');
     });
 
     bleno.on('accept', client => {
-        console.log(client);
+        console.log(client + " accepted!");
     });
 
     bleno.on('advertisingStart', err =>{
+	console.log('advertising started');
         if( err ) {
             console.log('error occure -> ' + err);
             return;
@@ -59,18 +41,29 @@ function vehicleBLE(Vehicle, powerPin, starterPin){
                 properties:['read', 'write', 'notify'],
                 onSubscribe: function(maxValue, updateValueCallback) {
                     console.log('device subscribed');
+		    this.updateInterval = setInterval(() => {
+			updateValueCallback(new Buffer('hi'));
+                    },1000);
                 },
                 onUnsubscribe: function() {
-
+		    console.log('unsubscribed');
+		    clearInterval(this.updateInterval);
                 },
                 onReadRequest: function() {
-
+		    console.log("read requested!");
                 },
                 onWriteRequest: function() {
-                    
-                }
+                    console.log("write requested!");
+                },
+                onNotify: function() {
+			console.log('notify');
+                },
+		onIndicate: function() {}
             })
         ]);
+    });
+    bleno.on('rssiUpdate', rssi =>{
+	console.log(rssi);
     });
 }
 

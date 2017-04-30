@@ -16,5 +16,8 @@
     "promise": "^7.1.1",
     "rpi-gpio": "^0.7.0",
     "serialport": "^4.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^3.19.0"
   }
 }

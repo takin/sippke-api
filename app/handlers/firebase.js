@@ -58,7 +58,7 @@ function FirebaseHandler(APP_ROOT,ID){
     };
 
     /**
-     * Power Handler
+     * power Handler
      */
     this.power = {
         set: function(newValue) {

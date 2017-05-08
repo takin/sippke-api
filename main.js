@@ -3,7 +3,7 @@ var FirebaseHandler = require('./app/handlers/firebase'),
 	ParkingHandler = require('./app/handlers/parking'),
 	PerimeterHandler = require('./app/handlers/perimeter'),
 	PowerHandler = require('./app/handlers/power'),
-        Bluetooth = require('./app/handlers/bluetooth'),
+    Bluetooth = require('./app/handlers/bluetooth'),
 	HornHandler = require('./app/handlers/horn'),
 	EngineHandler = require('./app/handlers/engine'),
 	Datamodel = require('./app/helpers/datamodel'),
@@ -15,8 +15,8 @@ var FirebaseHandler = require('./app/handlers/firebase'),
 
 var Vehicle = new FirebaseHandler(APP_ROOT,CONFIG.VehicleID);
 
-Vehicle.ready((initialData) => {
-	if( initialData == null ) {
+Vehicle.ready( initialData => {
+	if( initialData === null ) {
 		Vehicle.init(Datamodel);
 	}
 });
@@ -32,8 +32,8 @@ gps.on('gps-data', data => {
 	}
 });
 
-Vehicle.ping.listen((ping) => {
-	if(ping == 'ask') {
+Vehicle.ping.listen( ping => {
+	if(ping === 'ask') {
 		Vehicle.ping.answer('online');
 		if(Datamodel.position.latitude && Datamodel.position.longitude){
 			console.log(Datamodel.position);

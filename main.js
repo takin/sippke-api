@@ -11,12 +11,9 @@ var FirebaseHandler = require('./app/handlers/firebase'),
 	gps = new GPSParser('/dev/ttyUSB0', 9600),
 	path = require('path'),
 	APP_ROOT = `${path.dirname(__dirname)}/${path.basename(__dirname)}`,
-	vehicleID = 'DR3559KE',
-	powerPIN = 11,
-	enginePIN = 13,
-	alarmPIN = 12;
+	CONFIG = require('./config');
 
-var Vehicle = new FirebaseHandler(APP_ROOT,vehicleID);
+var Vehicle = new FirebaseHandler(APP_ROOT,CONFIG.VehicleID);
 
 Vehicle.ready((initialData) => {
 	if( initialData == null ) {
@@ -29,7 +26,7 @@ gps.on('gps-data', data => {
 	Datamodel.position.latitude = data.position.latitude;
 	Datamodel.position.longitude = data.position.longitude;
 	Datamodel.position.speed = data.speed;
-	if( data.speed.value >= 10) {
+	if( data.speed.value >= 5) {
 		console.log('emitted');
 		Vehicle.position.set(Datamodel.position);
 	}
@@ -45,10 +42,10 @@ Vehicle.ping.listen((ping) => {
 	}
 });
 
-HornHandler(alarmPIN,Vehicle.horn);
-PowerHandler(powerPIN,Vehicle.power);
-EngineHandler(enginePIN,Vehicle.engine);
-ParkingHandler(alarmPIN,gps,Vehicle.parking);
+HornHandler(CONFIG.GPIO_PIN.HORN,Vehicle.horn);
+PowerHandler(CONFIG.GPIO_PIN.POWER,Vehicle.power);
+EngineHandler(CONFIG.GPIO_PIN.ENGINE,Vehicle.engine);
+ParkingHandler(CONFIG.GPIO_PIN.HORN,gps,Vehicle.parking);
 //PerimeterHandler(powerPIN,gps,Vehicle.perimeter,Vehicle.power);
 
-Bluetooth(Vehicle, powerPIN, enginePIN);
+Bluetooth(Vehicle, CONFIG.GPIO_PIN.POWER, CONFIG.GPIO_PIN.ENGINE);

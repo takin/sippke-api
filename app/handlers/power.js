@@ -8,10 +8,10 @@ function Power(powerPin, powerModel) {
         console.log('set to off');
         gpio.setup(powerPin, gpio.DIR_OUT, err => {
             if ( !err ) {
-                var boolState = state == 'off';
+                var boolState = state === 'off';
                 gpio.write(powerPin, boolState, err => {
                     if (err) {
-                        state = (state == 'off') ? 'on' : 'off';
+                        state = (state === 'off') ? 'on' : 'off';
                     }
                     powerModel.set(state);
                 });

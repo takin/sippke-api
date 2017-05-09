@@ -16,6 +16,7 @@ var FirebaseHandler = require('./app/handlers/firebase'),
 var Vehicle = new FirebaseHandler(APP_ROOT,CONFIG.VehicleID);
 
 Vehicle.ready( initialData => {
+	HornHandler(CONFIG.GPIO_PIN.HORN,Vehicle.horn);
 	if( initialData === null ) {
 		Vehicle.init(Datamodel);
 	}
@@ -42,7 +43,6 @@ Vehicle.ping.listen( ping => {
 	}
 });
 
-HornHandler(CONFIG.GPIO_PIN.HORN,Vehicle.horn);
 PowerHandler(CONFIG.GPIO_PIN.POWER,Vehicle.power);
 EngineHandler(CONFIG.GPIO_PIN.ENGINE,Vehicle.engine);
 ParkingHandler(CONFIG.GPIO_PIN.HORN,gps,Vehicle.parking);

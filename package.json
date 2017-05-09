@@ -9,6 +9,7 @@
   "author": "syamsul muttaqin",
   "license": "MIT",
   "dependencies": {
+    "bleno": "^0.4.2",
     "firebase": "^3.1.0",
     "geolib": "^2.0.21",
     "lodash": "^4.13.1",
